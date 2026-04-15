@@ -54,7 +54,7 @@ app.layout = html.Div([
         "display": "inline-block",
         "verticalAlign": "top",
         "padding": "20px",
-        "backgroundColor": "#f4f4f4",
+        "backgroundColor": "#F8F4F4",
         "borderRight": "1px solid #ccc"
     }),
 
@@ -71,7 +71,7 @@ app.layout = html.Div([
                 "marginTop": "15px",
                 "padding": "10px",
                 "border": "1px solid #ccc",
-                "backgroundColor": "#fafafa",
+                "backgroundColor": "#FFF7F7",
                 "width": "80%"
             }
         )

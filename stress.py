@@ -1,9 +1,17 @@
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
+import os
 
 # Daten laden
-df = pd.read_excel(r"C:\Studium\EMI\Analyse\table\SleepStress_P1P2P6_daily.xlsx")
+table = 'table'
+excel_files = [f for f in os.listdir(table) if f.endswith(('.xlsx', '.xls'))]
+
+if not excel_files:
+    raise FileNotFoundError("Keine Excel-Datei gefunden")
+
+df = pd.read_excel(os.path.join(table, excel_files[0]))
+
 # Datum vorbereiten
 df["Date"] = pd.to_datetime(df["Date"])
 
@@ -31,14 +39,14 @@ df["weekday"] = df["Date"].dt.weekday
 
 # Metriken mit Farbskalen und Wertebereichen
 metrics = {
-    "Stress Score":        ("stress_score",        "RdYlGn_r",  0,   100),
+    "Stress Score":        ("stress_score",        "RdYlGn",  40,   100),
     "HRV (ms)":            ("hrv",                 "RdYlGn",   10,    50),
-    "Ruheherzrate":        ("resting_hr",          "RdYlGn_r", 45,    85),
-    "Atemfrequenz":        ("resp_rate",           "RdYlGn_r", 10,    18),
-    "Hauttemperatur (°C)": ("skin_temp",           "RdBu_r",   -2,     2),
+    "Ruheherzrate":        ("resting_hr",          "RdYlGn", 45,    85),
+    "Atemfrequenz":        ("resp_rate",           "RdYlGn", 10,    18),
+    "Hauttemperatur (°C)": ("skin_temp",           "RdBu",   -2,     2),
     "SpO₂ (%)":            ("spo2",                "RdYlGn",   92,   100),
     "Sleep Score":         ("sleep_score",         "RdYlGn",   40,   100),
-    "Unruhe":              ("restlessness",        "RdYlGn_r",  0,   0.5),
+    "Unruhe":              ("restlessness",        "RdYlGn",  0,   0.5),
     "Schlafdauer (h)":     ("sleep_hours",         "Blues",     4,    10),
 }
 
@@ -92,7 +100,7 @@ def get_month_ticks(data, yw_index):
     texts = ticks["month_label"].tolist()[:len(vals)]
     return vals, texts
 
-# Für "Alle (Ø)": Tagesdurchschnitt über alle Probanden
+# Tagesdurchschnitt pro Proband und Gesamt berechnen
 df_mean = df.groupby("Date")[
     [m[0] for m in metrics.values()]
 ].mean().reset_index()
@@ -103,9 +111,9 @@ df_mean["weekday"] = df_mean["Date"].dt.weekday
 datasets = {p: df[df["Participant_ID"] == p].copy() for p in participants}
 datasets["Alle (Ø)"] = df_mean
 
-# Traces bauen: eine Trace pro (View × Metrik)-Kombination
+# Traces für alle Probanden und Metriken vorbereiten
 traces = []
-trace_map = {}  # (view, metric) → trace-index
+trace_map = {}  
 
 for view in views:
     data = datasets[view]
@@ -162,7 +170,7 @@ for view in views:
         ]
     ))
 
-# Dropdown: Metriken (Standard: erster Proband)
+# Dropdown: Metriken 
 metric_buttons = []
 for m_label in metrics.keys():
     visibility = [False] * len(traces)

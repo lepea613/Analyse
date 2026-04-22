@@ -26,3 +26,15 @@ Ziel ist eine Veranschaulichung der Daten, sowie dem Vergleich einzelner Werte.
 ---
 
 ## Project Structure
+
+---
+
+## Getting Started
+
+### 1. Clone the repository
+````bash
+git clone https://github.com/lepea613/Analyse.git
+cd Analyse
+
+pip install -r requirements.txt
+jupyter notebook
